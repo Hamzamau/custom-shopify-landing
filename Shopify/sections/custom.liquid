@@ -1,0 +1,110 @@
+{{ 'custom.css' | asset_url | stylesheet_tag }}
+
+{% comment %}
+  Liquid file with a centered title, description, and multicolumn layout (4 columns per row), now including a circular image for each column and a button at the bottom.
+{% endcomment %}
+
+<section class="multicolumn-section" style="text-align: center;">
+  <h1 class="section-title">{{ section.settings.title }}</h1>
+  <p class="section-description">{{ section.settings.description }}</p>
+
+  <div class="multicolumns" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 1.3rem;">
+    {% for block in section.blocks %}
+      <div
+        class="column"
+        style="flex: 1 1 calc(25% - 1rem); max-width: calc(25% - 1rem); box-sizing: border-box; text-align: center;"
+      >
+        <img
+          src="{{ block.settings.image | img_url: 'original' }}"
+          alt="{{ block.settings.image_alt }}"
+          style="width: 60px; height: 60px; object-fit: cover;"
+        >
+
+        <h3 class="column-title">{{ block.settings.title }}</h3>
+        <p class="column-text">{{ block.settings.text }}</p>
+      </div>
+    {% endfor %}
+  </div>
+
+  <div style="padding-bottom:40px;" class="center{% if show_mobile_slider %} small-hide medium-hide{% endif %}">
+    {%- if section.settings.button_label != blank -%}
+      <a
+        class="button button--primary"
+        {% if section.settings.button_link == blank %}
+          role="link" aria-disabled="true"
+        {% else %}
+          href="{{ section.settings.button_link }}"
+        {% endif %}
+      >
+        {{ section.settings.button_label | escape }}
+      </a>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Multicolumn Section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Your Section Title"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description",
+      "default": "This is a section description."
+    },
+     {
+      "type": "text",
+      "id": "button_label",
+      "default": "t:sections.multicolumn.settings.button_label.default",
+      "label": "t:sections.multicolumn.settings.button_label.label"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "t:sections.multicolumn.settings.button_link.label"
+    },
+  ],
+  "blocks": [
+    {
+      "type": "column",
+      "name": "Column",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "image_alt",
+          "label": "Image Alt Text"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title",
+          "default": "Column Title"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Text",
+          "default": "Column text content goes here."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Multicolumn Section",
+      "category": "Custom"
+    }
+  ]
+}
+{% endschema %}
